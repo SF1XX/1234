@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CyberShield</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white flex flex-col min-h-screen font-sans antialiased">
+
+    <nav class="bg-[#0b1b24] text-white px-8 py-4 flex justify-between items-center shadow-md">
+        <div class="flex items-center">
+            <img src="{{ url_for('static', filename='logo_empresa.png') }}" alt="Cybershield Security Solutions" class="h-12 w-auto object-contain">
+        </div>
+        <div class="space-x-2 text-sm font-medium tracking-wide text-gray-200">
+            <a href="#" class="hover:text-white transition-colors">Home</a>
+            <span class="text-gray-500">|</span>
+            <a href="#" class="hover:text-white transition-colors">Servicios</a>
+            <span class="text-gray-500">|</span>
+            <a href="#" class="hover:text-white transition-colors">Contacto</a>
+        </div>
+    </nav>
+
+    <main class="flex-grow max-w-5xl mx-auto px-6 py-16 text-center">
+        <h1 class="text-4xl md:text-5xl font-bold text-[#0b1b24] mb-16 tracking-tight">
+            Servicios de Ciberseguridad<br>Especializados
+        </h1>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8 items-stretch">
+            
+            <div class="bg-[#8fa3b0] rounded-3xl p-8 flex flex-col justify-between items-center shadow-lg transform transition-all duration-200 hover:scale-[1.02]">
+                <div class="flex flex-col items-center w-full">
+                    <div class="mb-6">
+                        <img src="{{ url_for('static', filename='logo_pentesting.png') }}" alt="Icono Pentesting" class="h-16 w-16 object-contain">
+                    </div>
+                    <h2 class="text-xl font-bold tracking-wider text-[#1e2d35] mb-4">PENTESTING</h2>
+                    <p class="text-sm font-medium text-[#1e2d35] leading-relaxed mb-8 px-2">
+                        Ensayos de penetración éticos para identificar vulnerabilidades críticas en su infraestructura.
+                    </p>
+                </div>
+                <button onclick="document.getElementById('modalFormulario').classList.remove('hidden'); document.getElementById('id_servicio_input').value = '1';" class="w-full bg-[#2c3e47] text-white font-bold py-3.5 rounded-xl tracking-widest text-xs uppercase hover:bg-[#1f2d34] transition-colors shadow-sm">
+                    MAS INFORMACION
+                </button>
+            </div>
+
+            <div class="bg-[#8fa3b0] rounded-3xl p-8 flex flex-col justify-between items-center shadow-lg transform transition-all duration-200 hover:scale-[1.02]">
+                <div class="flex flex-col items-center w-full">
+                    <div class="mb-6">
+                        <img src="{{ url_for('static', filename='logo_auditorias.png') }}" alt="Icono Auditoria" class="h-16 w-16 object-contain">
+                    </div>
+                    <h2 class="text-xl font-bold tracking-wider text-[#1e2d35] mb-4">AUDITORIA</h2>
+                    <p class="text-sm font-medium text-[#1e2d35] leading-relaxed mb-8 px-2">
+                        Evaluaciones exhaustivas de seguridad para garantizar cumplimiento y mejorar políticas.
+                    </p>
+                </div>
+                <button onclick="document.getElementById('modalFormulario').classList.remove('hidden'); document.getElementById('id_servicio_input').value = '2';" class="w-full bg-[#2c3e47] text-white font-bold py-3.5 rounded-xl tracking-widest text-xs uppercase hover:bg-[#1f2d34] transition-colors shadow-sm">
+                    MAS INFORMACION
+                </button>
+            </div>
+
+            <div class="bg-[#8fa3b0] rounded-3xl p-8 flex flex-col justify-between items-center shadow-lg transform transition-all duration-200 hover:scale-[1.02]">
+                <div class="flex flex-col items-center w-full">
+                    <div class="mb-6">
+                        <img src="{{ url_for('static', filename='logo_capacitacion.png') }}" alt="Icono Capacitaciones" class="h-16 w-16 object-contain">
+                    </div>
+                    <h2 class="text-xl font-bold tracking-wider text-[#1e2d35] mb-4">CAPACITACIONES</h2>
+                    <p class="text-sm font-medium text-[#1e2d35] leading-relaxed mb-8 px-2">
+                        Formación de personal clave para fortalecer la concienciación y cultura de seguridad.
+                    </p>
+                </div>
+                <button onclick="document.getElementById('modalFormulario').classList.remove('hidden'); document.getElementById('id_servicio_input').value = '3';" class="w-full bg-[#2c3e47] text-white font-bold py-3.5 rounded-xl tracking-widest text-xs uppercase hover:bg-[#1f2d34] transition-colors shadow-sm">
+                    MAS INFORMACION
+                </button>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-[#354c59] text-gray-300 text-center py-5 text-xs tracking-wider font-medium shadow-inner">
+        Copyright © 2026 Lees All rights reserved.
+    </footer>
+
+    <div id="modalFormulario" class="fixed inset-0 bg-black/80 flex justify-center items-center hidden z-50">
+        <div class="bg-[#111921] rounded-3xl p-8 w-full max-w-[420px] shadow-2xl">
+            <h2 class="text-white text-lg font-bold mb-6 text-center tracking-widest uppercase">Envíanos un mensaje</h2>
+            
+            <form id="formularioContacto" action="#" method="POST" class="flex flex-col space-y-3" onsubmit="mostrarMensaje(event)">
+                <input type="hidden" name="id_servicio" id="id_servicio_input" value="">
+
+                <input type="text" name="nombre" placeholder="Nombre" required
+                    class="bg-[#2a3b47] text-gray-200 placeholder-gray-400 rounded-xl px-4 py-3.5 outline-none focus:ring-1 focus:ring-gray-400 w-full text-sm shadow-inner">
+                
+                <input type="email" name="correo" placeholder="Correo Electrónico" required
+                    class="bg-[#2a3b47] text-gray-200 placeholder-gray-400 rounded-xl px-4 py-3.5 outline-none focus:ring-1 focus:ring-gray-400 w-full text-sm shadow-inner">
+                
+                <input type="tel" name="telefono" placeholder="Teléfono (optional)" 
+                    class="bg-[#2a3b47] text-gray-200 placeholder-gray-400 rounded-xl px-4 py-3.5 outline-none focus:ring-1 focus:ring-gray-400 w-full text-sm shadow-inner">
+                
+                <input type="text" name="asunto" placeholder="Asunto" required
+                    class="bg-[#2a3b47] text-gray-200 placeholder-gray-400 rounded-xl px-4 py-3.5 outline-none focus:ring-1 focus:ring-gray-400 w-full text-sm shadow-inner">
+                
+                <textarea name="mensaje" placeholder="Mensaje" rows="3" required
+                    class="bg-[#2a3b47] text-gray-200 placeholder-gray-400 rounded-xl px-4 py-3.5 outline-none focus:ring-1 focus:ring-gray-400 w-full text-sm shadow-inner resize-none"></textarea>
+                
+                <button type="submit" 
+                    class="bg-[#dee3e9] text-black font-bold py-3.5 rounded-2xl tracking-wide hover:bg-white transition-colors mt-4 w-full text-sm">
+                    ENVIAR MENSAJE
+                </button>
+            </form>
+
+            <div id="mensajeExito" class="hidden py-8 text-center">
+                <svg class="w-16 h-16 text-green-400 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-gray-200 text-lg font-medium">A la brevedad nos pondremos en contacto con usted.</p>
+            </div>
+
+            <button onclick="cerrarModal()" class="text-gray-500 hover:text-white mt-5 text-xs font-semibold w-full text-center transition-colors">
+                CERRAR
+            </button>
+        </div>
+    </div>
+
+    <script>
+        function mostrarMensaje(event) {
+            event.preventDefault();
+            document.getElementById('formularioContacto').classList.add('hidden');
+            document.getElementById('mensajeExito').classList.remove('hidden');
+        }
+
+        function cerrarModal() {
+            document.getElementById('modalFormulario').classList.add('hidden');
+            
+            setTimeout(() => {
+                document.getElementById('formularioContacto').reset();
+                document.getElementById('formularioContacto').classList.remove('hidden');
+                document.getElementById('mensajeExito').classList.add('hidden');
+            }, 300);
+        }
+    </script>
+</body>
+</html>
