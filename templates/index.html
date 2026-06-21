@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>El Mercader - Venta de Articulos Raros</title>
+    <title>E-Commerce Ciberseguridad</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="flex flex-col min-h-screen font-sans antialiased text-[#F8FAFC] bg-cover bg-center bg-fixed" style="background-image: linear-gradient(rgba(26, 18, 48, 0.85), rgba(9, 10, 15, 0.95)), url('{{ url_for('static', filename='fondo.png') }}');">
@@ -12,8 +12,14 @@
         <div class="flex items-center">
             <img src="{{ url_for('static', filename='logo_empresa.png') }}" alt="Cybershield" class="h-12 w-auto object-contain">
         </div>
-        <div class="text-xl font-bold tracking-wide text-[#7C3AED]">
-            Saldo: USD <span id="saldo" class="text-[#F8FAFC]">120000</span>
+        <div class="flex items-center gap-6 text-xl font-bold tracking-wide text-[#7C3AED]">
+            <button onclick="abrirCarrito()" class="flex items-center gap-2 hover:opacity-80 transition-opacity cursor-pointer">
+                <img src="{{ url_for('static', filename='carrito.png') }}" alt="Carrito" class="w-7 h-7 object-contain">
+                <span class="text-[#7C3AED] font-bold">(<span id="contadorCarrito" class="text-[#F8FAFC]">0</span>)</span>
+            </button>
+            <div>
+                Saldo: USD <span id="saldo" class="text-[#F8FAFC]">120000</span>
+            </div>
         </div>
     </nav>
 
@@ -28,20 +34,39 @@
 
     <div id="modalCompra" class="fixed inset-0 bg-black/80 flex justify-center items-center hidden z-50">
         <div class="bg-[#090A0F] rounded-3xl p-8 w-full max-w-[420px] shadow-2xl text-center border border-[#2F1B63]">
-            
             <div id="modalImagen" class="w-full h-40 bg-[#1A1230] rounded-xl mb-6 flex items-center justify-center text-gray-400 text-sm border border-[#2F1B63]">
-                </div>
+            </div>
             
             <input type="number" id="inputCantidad" placeholder="Cantidad" min="1" value="1"
                 class="bg-[#1A1230] text-[#F8FAFC] font-bold text-center placeholder-gray-500 rounded-xl px-4 py-3.5 outline-none w-full mb-4 shadow-inner border border-[#2F1B63] focus:border-[#7C3AED]">
             
-            <button onclick="confirmarCompra()" 
+            <button onclick="agregarAlCarrito()" 
                 class="bg-[#7C3AED] text-[#F8FAFC] font-bold py-3.5 rounded-2xl tracking-wide hover:bg-[#5b21b6] transition-colors w-full text-sm">
-                CONFIRMAR COMPRA
+                AGREGAR AL CARRITO
             </button>
             <button onclick="cerrarModales()" class="text-gray-400 hover:text-[#7C3AED] mt-5 text-xs font-semibold w-full transition-colors">
                 CANCELAR
             </button>
+        </div>
+    </div>
+
+    <div id="modalCarrito" class="fixed inset-0 bg-black/80 flex justify-center items-center hidden z-50">
+        <div class="bg-[#090A0F] rounded-3xl p-8 w-full max-w-[500px] shadow-2xl text-center border border-[#2F1B63] max-h-[80vh] flex flex-col">
+            <h2 class="text-2xl font-bold text-[#F8FAFC] mb-6">Tu Carrito</h2>
+            
+            <div id="listaCarrito" class="flex-grow overflow-y-auto mb-6 space-y-4 text-left pr-2">
+            </div>
+            
+            <div class="pt-4 border-t border-[#2F1B63]">
+                <p class="text-xl font-bold text-[#7C3AED] mb-6">Total: <span class="text-[#F8FAFC]">USD <span id="totalCarrito">0</span></span></p>
+                <button onclick="pagarCarrito()" 
+                    class="bg-[#7C3AED] text-[#F8FAFC] font-bold py-3.5 rounded-2xl tracking-wide hover:bg-[#5b21b6] transition-colors w-full text-sm">
+                    CONFIRMAR PAGO
+                </button>
+                <button onclick="cerrarModales()" class="text-gray-400 hover:text-[#7C3AED] mt-5 text-xs font-semibold w-full transition-colors">
+                    SEGUIR COMPRANDO
+                </button>
+            </div>
         </div>
     </div>
 
@@ -59,7 +84,8 @@
 
     <script>
         let saldoDisponible = 120000;
-        let precioProductoActual = 0;
+        let productoSeleccionado = null;
+        let carrito = [];
 
         const productos = [
             { id: 1, titulo: "Broche Elegante", desc: "Stock disponible", precio: 5000, imagen: "producto1.png" },
@@ -70,7 +96,7 @@
             { id: 6, titulo: "Diamante Amarillo", desc: "Stock disponible", precio: 2500, imagen: "producto6.png" },
             { id: 7, titulo: "Corazón de África", desc: "Stock disponible", precio: 3500, imagen: "producto7.png" },
             { id: 8, titulo: "Rubí", desc: "Stock disponible", precio: 1000, imagen: "producto8.png" },
-            { id: 9, titulo: "Promoción de AED", desc: "Sin Stock", precio: 1000000, imagen: "producto9.png" }
+            { id: 9, titulo: "PRODUCTO 9", desc: "Stock disponible", precio: 6000, imagen: "producto9.png" }
         ];
 
         const contenedor = document.getElementById('contenedorProductos');
@@ -86,52 +112,104 @@
                         <p class="text-sm font-medium text-gray-300 leading-relaxed mb-4 px-2">${prod.desc}</p>
                         <p class="text-lg font-bold text-[#7C3AED] mb-6">Precio: <span class="text-[#F8FAFC]">USD ${prod.precio}</span></p>
                     </div>
-                    <button onclick="abrirModalCompra(${prod.precio}, '${prod.imagen}')" class="w-full bg-[#7C3AED] text-[#F8FAFC] font-bold py-3.5 rounded-xl tracking-widest text-xs uppercase hover:bg-[#5b21b6] transition-colors shadow-sm">
-                        COMPRAR
+                    <button onclick="abrirModalCompra(${prod.id})" class="w-full bg-[#7C3AED] text-[#F8FAFC] font-bold py-3.5 rounded-xl tracking-widest text-xs uppercase hover:bg-[#5b21b6] transition-colors shadow-sm">
+                        AGREGAR
                     </button>
                 </div>
             `;
         });
 
-        function actualizarSaldoUI() {
+        function actualizarUI() {
             document.getElementById('saldo').innerText = saldoDisponible.toLocaleString('es-AR');
+            
+            const totalItems = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+            document.getElementById('contadorCarrito').innerText = totalItems;
         }
 
-        // SE ACTUALIZÓ ESTA FUNCIÓN PARA MOSTRAR LA IMAGEN
-        function abrirModalCompra(precio, imagen) {
-            precioProductoActual = precio;
+        function abrirModalCompra(id) {
+            productoSeleccionado = productos.find(p => p.id === id);
             document.getElementById('inputCantidad').value = 1;
-            document.getElementById('modalImagen').innerHTML = '<img src="/static/' + imagen + '" class="w-full h-full object-contain rounded-xl p-2">';
+            document.getElementById('modalImagen').innerHTML = '<img src="/static/' + productoSeleccionado.imagen + '" class="w-full h-full object-contain rounded-xl p-2">';
             document.getElementById('modalCompra').classList.remove('hidden');
         }
 
-        function confirmarCompra() {
+        function agregarAlCarrito() {
             const cantidad = parseInt(document.getElementById('inputCantidad').value);
             if (isNaN(cantidad) || cantidad <= 0) return;
 
-            const total = precioProductoActual * cantidad;
+            const index = carrito.findIndex(item => item.id === productoSeleccionado.id);
+            if (index !== -1) {
+                carrito[index].cantidad += cantidad;
+            } else {
+                carrito.push({ ...productoSeleccionado, cantidad: cantidad });
+            }
+
+            actualizarUI();
+            cerrarModales();
+        }
+
+        function abrirCarrito() {
+            const lista = document.getElementById('listaCarrito');
+            lista.innerHTML = '';
+            
+            if (carrito.length === 0) {
+                lista.innerHTML = '<p class="text-gray-400 text-center py-8">El carrito está vacío.</p>';
+            } else {
+                carrito.forEach((item, index) => {
+                    lista.innerHTML += `
+                        <div class="flex justify-between items-center bg-[#1A1230] p-4 rounded-xl border border-[#2F1B63]">
+                            <div>
+                                <p class="font-bold text-[#F8FAFC]">${item.titulo}</p>
+                                <p class="text-sm text-gray-400">Cant: ${item.cantidad} x USD ${item.precio}</p>
+                            </div>
+                            <div class="flex items-center gap-4">
+                                <p class="font-bold text-[#7C3AED]">USD ${item.precio * item.cantidad}</p>
+                                <button onclick="eliminarDelCarrito(${index})" class="text-red-400 hover:text-red-300 text-sm font-bold">X</button>
+                            </div>
+                        </div>
+                    `;
+                });
+            }
+
+            const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            document.getElementById('totalCarrito').innerText = total.toLocaleString('es-AR');
+            
+            document.getElementById('modalCarrito').classList.remove('hidden');
+        }
+
+        function eliminarDelCarrito(index) {
+            carrito.splice(index, 1);
+            actualizarUI();
+            abrirCarrito();
+        }
+
+        function pagarCarrito() {
+            if (carrito.length === 0) return;
+
+            const total = carrito.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
 
             if (total > saldoDisponible) {
-                alert("Saldo insuficiente para realizar esta compra.");
+                alert("Saldo insuficiente para pagar el carrito.");
                 return;
             }
 
             saldoDisponible -= total;
-            actualizarSaldoUI();
+            carrito = [];
+            actualizarUI();
 
-            document.getElementById('modalCompra').classList.add('hidden');
+            document.getElementById('modalCarrito').classList.add('hidden');
             document.getElementById('modalExito').classList.remove('hidden');
         }
 
         function cerrarModales() {
             document.getElementById('modalCompra').classList.add('hidden');
+            document.getElementById('modalCarrito').classList.add('hidden');
             document.getElementById('modalExito').classList.add('hidden');
-            precioProductoActual = 0;
-            // Limpia la imagen al cerrar
+            productoSeleccionado = null;
             document.getElementById('modalImagen').innerHTML = '';
         }
 
-        actualizarSaldoUI();
+        actualizarUI();
     </script>
 </body>
 </html>
